@@ -5,8 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrushPicker"
         mc:Ignorable="d"
-        Title="BrushPickerWindow" Height="300" Width="300">
-    <Grid>
-        
-    </Grid>
+        Title="BrushPickerWindow" Height="345.847" Width="539.069">
+    <WrapPanel Orientation="Vertical">
+        <TabControl>
+            <TabItem Header="Solid">
+                <WrapPanel Orientation="Vertical">
+                    <Canvas x:Name="colorBarCanvas" Width="250" Height="20" Margin="0,5,0,0">
+                        <Rectangle x:Name="colorBarRect" Width="250" Height="20"></Rectangle>
+                        <Slider x:Name="colorBarSlider" Width="250" Height="20" />
+                    </Canvas>
+                    <Canvas x:Name="colorCellsCanvas" Width="250" Height="250"></Canvas>
+                </WrapPanel>
+            </TabItem>
+        </TabControl>
+        <TextBlock>現在のブラシ</TextBlock>
+        <Canvas Width="250" Height="250">
+            <Rectangle x:Name="nowBrushRect" />
+        </Canvas>
+    </WrapPanel>
 </Window>

@@ -23,6 +23,15 @@ namespace BrushPicker
         public MainWindow()
         {
             InitializeComponent();
+
+            var window = new BrushPickerWindow();
+            window.ShowDialog();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new BrushPickerWindow();
+            window.ShowDialog();
         }
     }
 }

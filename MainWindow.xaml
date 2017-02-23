@@ -11,6 +11,6 @@
         <Canvas Width="200" Height="200">
             <Rectangle x:Name="rect" />
         </Canvas>
-        <Button >Pick Brush</Button>
+        <Button Click="Button_Click" >Pick Brush</Button>
     </WrapPanel>
 </Window>
