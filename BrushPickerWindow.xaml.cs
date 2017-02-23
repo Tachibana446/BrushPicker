@@ -24,14 +24,9 @@ namespace BrushPicker
         public void SetNowBrush(Brush b)
         {
             _nowBrush = b;
+            nowBrushRect.Fill = _nowBrush;
         }
 
-        private Hsv Hsv { get { return _hsv; } }
-        private Hsv _hsv;
-        public void SetHsv(Hsv hsv)
-        {
-            _hsv = hsv;
-        }
         /// <summary>
         /// 現在カラーバーが指しているH
         /// </summary>
@@ -40,8 +35,7 @@ namespace BrushPicker
         public BrushPickerWindow()
         {
             InitializeComponent();
-            SetHsv(new Hsv(0, 255, 255));
-            SetNowBrush(new SolidColorBrush(GetColorFromHsv(Hsv)));
+            SetNowBrush(new SolidColorBrush(Colors.Red));
             InitColorBar();
             InitColorCells();
             UpdateColorCells();
@@ -51,7 +45,7 @@ namespace BrushPicker
         {
             InitializeComponent();
             SetNowBrush(new SolidColorBrush(defaultColor));
-            SetHsv(new Hsv(defaultColor));
+            nowH = new Hsv(defaultColor).H;
             InitColorBar();
             InitColorCells();
             UpdateColorCells();
@@ -97,7 +91,7 @@ namespace BrushPicker
                     Canvas.SetLeft(rect, x * chipSize); Canvas.SetTop(rect, y * chipSize);
                     var s = (byte)Math.Round(x * 255.0 / (cellSplit - 1));
                     var v = (byte)Math.Round(255 - y * 255.0 / (cellSplit - 1));
-                    rect.Fill = new SolidColorBrush(GetColorFromHsv(Hsv.H, s, v));
+                    rect.Fill = new SolidColorBrush(GetColorFromHsv(nowH, s, v));
                     colorCellsCanvas.Children.Add(rect);
                     list.Add(rect);
                 }
@@ -114,8 +108,8 @@ namespace BrushPicker
                 for (int x = 0; x < cellSplit; x++)
                 {
                     var rect = ColorCells[y][x];
-                    byte s = (byte)Math.Round(x * 255.0 / cellSplit);
-                    byte v = (byte)Math.Round(255 - y * 255.0 / cellSplit);
+                    byte s = (byte)Math.Round(x * 255.0 / (cellSplit - 1));
+                    byte v = (byte)Math.Round(255 - y * 255.0 / (cellSplit - 1));
                     rect.Fill = new SolidColorBrush(GetColorFromHsv(nowH, s, v));
                 }
             }
@@ -192,6 +186,22 @@ namespace BrushPicker
             uint h = (uint)Math.Round(e.NewValue % 360);
             nowH = h;
             UpdateColorCells();
+        }
+
+        /// <summary>
+        /// カラーセルをクリックした時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void colorCellsCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var p = e.GetPosition(colorCellsCanvas);
+            int ChipSize = (int)Math.Round(colorCellsCanvas.Width / cellSplit * 1.0);
+            int x = (int)Math.Round(p.X) / ChipSize;
+            int y = (int)Math.Round(p.Y) / ChipSize;
+            byte s = (byte)Math.Round(x * 255.0 / (cellSplit - 1));
+            byte v = (byte)Math.Round(255 - y * 255.0 / (cellSplit - 1));
+            SetNowBrush(new SolidColorBrush(GetColorFromHsv(new Hsv(nowH, s, v))));
         }
     }
 

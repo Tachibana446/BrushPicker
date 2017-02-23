@@ -15,13 +15,13 @@
                         <Slider x:Name="colorBarSlider" Width="250" Height="20" 
                                 Maximum="360" Minimum="0" LargeChange="10" ValueChanged="colorBarSlider_ValueChanged"/>
                     </Canvas>
-                    <Canvas x:Name="colorCellsCanvas" Width="250" Height="250"></Canvas>
+                    <Canvas x:Name="colorCellsCanvas" Width="250" Height="250" MouseDown="colorCellsCanvas_MouseDown"></Canvas>
                 </WrapPanel>
             </TabItem>
         </TabControl>
         <TextBlock>現在のブラシ</TextBlock>
         <Canvas Width="250" Height="250">
-            <Rectangle x:Name="nowBrushRect" />
+            <Rectangle x:Name="nowBrushRect" Width="250" Height="250"/>
         </Canvas>
     </WrapPanel>
 </Window>
