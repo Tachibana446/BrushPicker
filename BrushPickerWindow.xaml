@@ -29,11 +29,14 @@
             </TabItem>
         </TabControl>
         <TextBlock>現在のブラシ</TextBlock>
-        <Viewbox Width="250" Height="250">
+        <Viewbox Width="250" Height="200">
             <Canvas Width="600" Height="600">
                 <Rectangle x:Name="nowBrushRect" Width="600" Height="600"/>
             </Canvas>
         </Viewbox>
+        <TextBlock x:Name="opacityLabel">透明度:100%</TextBlock>
+        <Slider x:Name="opacitySlider" Maximum="1.0" Minimum="0.0" LargeChange="0.1" Value="1" 
+                SmallChange="0.01" ValueChanged="opacitySlider_ValueChanged"></Slider>
         <WrapPanel HorizontalAlignment="Center">
             <WrapPanel.Resources>
                 <Style TargetType="Button">

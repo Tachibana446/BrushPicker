@@ -279,6 +279,16 @@ namespace BrushPicker
             DialogResult = false;
             Close();
         }
+
+        private void opacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (NowBrush == null) return;
+            double value = Math.Round(opacitySlider.Value, 2);
+            var newBrush = NowBrush.Clone();
+            newBrush.Opacity = value;
+            SetNowBrush(newBrush);
+            opacityLabel.Text = $"透明度:{value * 100}%";
+        }
     }
 
     public class Hsv
