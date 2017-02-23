@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,6 +40,7 @@ namespace BrushPicker
             InitColorBar();
             InitColorCells();
             UpdateColorCells();
+            InitImageBrushComboBox();
         }
 
         public BrushPickerWindow(Color defaultColor)
@@ -49,6 +51,7 @@ namespace BrushPicker
             InitColorBar();
             InitColorCells();
             UpdateColorCells();
+            InitImageBrushComboBox();
         }
 
         /// <summary>
@@ -202,6 +205,79 @@ namespace BrushPicker
             byte s = (byte)Math.Round(x * 255.0 / (cellSplit - 1));
             byte v = (byte)Math.Round(255 - y * 255.0 / (cellSplit - 1));
             SetNowBrush(new SolidColorBrush(GetColorFromHsv(new Hsv(nowH, s, v))));
+        }
+
+        //-----------------------------------------------------------------------------------------------------
+        //
+        // Image Brush
+        //
+        //-----------------------------------------------------------------------------------------------------
+
+        private string nowImageFilePath = "";
+        private Stretch nowStretch = Stretch.Uniform;
+        private List<string> stretchDescriptions = new string[] { "縦横比を維持して画面に収める", "縦横比を維持して画面を埋める", "画面一杯に広げる", "本のサイズを維持する" }.ToList();
+        private List<Stretch> stretchs = new Stretch[] { Stretch.Uniform, Stretch.UniformToFill, Stretch.Fill, Stretch.None }.ToList();
+
+        private void InitImageBrushComboBox()
+        {
+            UniformComboBox.ItemsSource = stretchDescriptions;
+            UniformComboBox.SelectedIndex = 0;
+            TileComboBox.ItemsSource = tileModeDescriptions;
+            TileComboBox.SelectedIndex = 0;
+        }
+
+        private void UpdateNowImageBrush()
+        {
+            if (!System.IO.File.Exists(nowImageFilePath)) return;
+            var image = new BitmapImage(new Uri(nowImageFilePath));
+            SetNowBrush(new ImageBrush(image) { Stretch = nowStretch, TileMode = nowTileMode });
+        }
+
+        /// <summary>
+        /// 画像を選択ボタンをクリック
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ImageSelectButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            dialog.Filter = "画像|*.jpg;*.jpeg;*.png;*.gif;*.bmp|すべてのファイル|*.*";
+            dialog.Title = "画像を選択";
+            if (dialog.ShowDialog() == true)
+            {
+                nowImageFilePath = dialog.FileName;
+                UpdateNowImageBrush();
+            }
+        }
+
+        private void UniformComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (UniformComboBox.SelectedIndex < 0) return;
+            nowStretch = stretchs[UniformComboBox.SelectedIndex];
+            UpdateNowImageBrush();
+        }
+
+        private List<string> tileModeDescriptions = new string[] { "敷き詰めない", "そのまま敷き詰め", "左右反転しながら敷き詰め", "上下反転しながら敷き詰め", "上下左右反転しながら敷き詰め", }.ToList();
+        private List<TileMode> tileModes = new TileMode[] { TileMode.None, TileMode.Tile, TileMode.FlipX, TileMode.FlipY, TileMode.FlipXY }.ToList();
+        private TileMode nowTileMode = TileMode.None;
+
+        private void TileComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TileComboBox.SelectedIndex < 0) return;
+            nowTileMode = tileModes[TileComboBox.SelectedIndex];
+            UpdateNowImageBrush();
+        }
+
+        private void okButton_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
+        }
+
+        private void cancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
         }
     }
 

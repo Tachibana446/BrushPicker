@@ -25,13 +25,19 @@ namespace BrushPicker
             InitializeComponent();
 
             var window = new BrushPickerWindow();
-            window.ShowDialog();
+            if (window.ShowDialog() == true)
+            {
+                wrapPanel.Background = window.NowBrush;
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var window = new BrushPickerWindow();
-            window.ShowDialog();
+            if (window.ShowDialog() == true)
+            {
+                wrapPanel.Background = window.NowBrush;
+            }
         }
     }
 }

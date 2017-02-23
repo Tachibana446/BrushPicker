@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="BrushPickerWindow" Height="345.847" Width="539.069">
     <WrapPanel Orientation="Vertical">
-        <TabControl>
-            <TabItem Header="Solid">
+        <TabControl Height="310" Width="260">
+            <TabItem Header="単色">
                 <WrapPanel Orientation="Vertical">
                     <Canvas x:Name="colorBarCanvas" Width="250" Height="20" Margin="0,5,0,0">
                         <Rectangle x:Name="colorBarRect" Width="250" Height="20"></Rectangle>
@@ -18,10 +18,31 @@
                     <Canvas x:Name="colorCellsCanvas" Width="250" Height="250" MouseDown="colorCellsCanvas_MouseDown"></Canvas>
                 </WrapPanel>
             </TabItem>
+            <TabItem Header="画像ブラシ">
+                <WrapPanel Orientation="Vertical">
+                    <Button Click="ImageSelectButton_Click">ファイルを選択</Button>
+                    <TextBlock>縦横比と拡大</TextBlock>
+                    <ComboBox x:Name="UniformComboBox" SelectionChanged="UniformComboBox_SelectionChanged"></ComboBox>
+                    <TextBlock>タイル状に敷き詰め</TextBlock>
+                    <ComboBox x:Name="TileComboBox" SelectionChanged="TileComboBox_SelectionChanged" />
+                </WrapPanel>
+            </TabItem>
         </TabControl>
         <TextBlock>現在のブラシ</TextBlock>
-        <Canvas Width="250" Height="250">
-            <Rectangle x:Name="nowBrushRect" Width="250" Height="250"/>
-        </Canvas>
+        <Viewbox Width="250" Height="250">
+            <Canvas Width="600" Height="600">
+                <Rectangle x:Name="nowBrushRect" Width="600" Height="600"/>
+            </Canvas>
+        </Viewbox>
+        <WrapPanel HorizontalAlignment="Center">
+            <WrapPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Padding" Value="10,0" />
+                    <Setter Property="Margin" Value="10,0" />
+                </Style>
+            </WrapPanel.Resources>
+            <Button x:Name="okButton" Click="okButton_Click">OK</Button>
+            <Button x:Name="cancelButton" Click="cancelButton_Click">キャンセル</Button>
+        </WrapPanel>
     </WrapPanel>
 </Window>

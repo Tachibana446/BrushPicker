@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BrushPicker"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <WrapPanel Orientation="Vertical">
+    <WrapPanel Orientation="Vertical" x:Name="wrapPanel">
         <Label>Now Color:</Label>
         <Canvas Width="200" Height="200">
             <Rectangle x:Name="rect" />
