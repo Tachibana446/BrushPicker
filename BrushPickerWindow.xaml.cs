@@ -224,13 +224,17 @@ namespace BrushPicker
             UniformComboBox.SelectedIndex = 0;
             TileComboBox.ItemsSource = tileModeDescriptions;
             TileComboBox.SelectedIndex = 0;
+            TileWidthComboBox.ItemsSource = tileSizes.Select(a => $"{a * 100}%");
+            TileWidthComboBox.SelectedIndex = 0;
+            TileHeightComboBox.ItemsSource = tileSizes.Select(a => $"{a * 100}%");
+            TileHeightComboBox.SelectedIndex = 0;
         }
 
         private void UpdateNowImageBrush()
         {
             if (!System.IO.File.Exists(nowImageFilePath)) return;
             var image = new BitmapImage(new Uri(nowImageFilePath));
-            SetNowBrush(new ImageBrush(image) { Stretch = nowStretch, TileMode = nowTileMode });
+            SetNowBrush(new ImageBrush(image) { Stretch = nowStretch, TileMode = nowTileMode, Viewport = nowTileViewport });
         }
 
         /// <summary>
@@ -260,13 +264,49 @@ namespace BrushPicker
         private List<string> tileModeDescriptions = new string[] { "敷き詰めない", "そのまま敷き詰め", "左右反転しながら敷き詰め", "上下反転しながら敷き詰め", "上下左右反転しながら敷き詰め", }.ToList();
         private List<TileMode> tileModes = new TileMode[] { TileMode.None, TileMode.Tile, TileMode.FlipX, TileMode.FlipY, TileMode.FlipXY }.ToList();
         private TileMode nowTileMode = TileMode.None;
+        private Rect nowTileViewport = new Rect(0, 0, 0.1, 0.1);
+        private List<double> tileSizes = new double[] { 0.1, 0.2, 0.25, 0.33, 0.5, 1.0 }.ToList();
 
+        /// <summary>
+        /// タイルモード
+        /// </summary>
         private void TileComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (TileComboBox.SelectedIndex < 0) return;
             nowTileMode = tileModes[TileComboBox.SelectedIndex];
+            if (TileComboBox.SelectedIndex == 0)
+                TileSizePanel.IsEnabled = false;
+            else
+                TileSizePanel.IsEnabled = true;
             UpdateNowImageBrush();
         }
+
+        /// <summary>
+        /// タイルの縦のサイズ
+        /// </summary>
+        private void TileHeightComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TileHeightComboBox.SelectedIndex < 0) return;
+            double h = tileSizes[TileHeightComboBox.SelectedIndex];
+            nowTileViewport.Height = h;
+            UpdateNowImageBrush();
+        }
+        /// <summary>
+        /// タイルの横のサイズ
+        /// </summary>
+        private void TileWidthComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TileHeightComboBox.SelectedIndex < 0) return;
+            double w = tileSizes[TileHeightComboBox.SelectedIndex];
+            nowTileViewport.Width = w;
+            UpdateNowImageBrush();
+        }
+
+        //===============================================================================================
+        //
+        // Opacity  OK  Cancel
+        //
+        //===============================================================================================
 
         private void okButton_Click(object sender, RoutedEventArgs e)
         {
@@ -289,6 +329,7 @@ namespace BrushPicker
             SetNowBrush(newBrush);
             opacityLabel.Text = $"透明度:{value * 100}%";
         }
+
     }
 
     public class Hsv

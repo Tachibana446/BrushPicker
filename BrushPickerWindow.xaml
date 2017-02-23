@@ -25,6 +25,16 @@
                     <ComboBox x:Name="UniformComboBox" SelectionChanged="UniformComboBox_SelectionChanged"></ComboBox>
                     <TextBlock>タイル状に敷き詰め</TextBlock>
                     <ComboBox x:Name="TileComboBox" SelectionChanged="TileComboBox_SelectionChanged" />
+                    <WrapPanel x:Name="TileSizePanel">
+                        <WrapPanel Orientation="Vertical">
+                            <TextBlock>タイルの縦のサイズ</TextBlock>
+                            <ComboBox x:Name="TileHeightComboBox" SelectionChanged="TileHeightComboBox_SelectionChanged" ></ComboBox>
+                        </WrapPanel>
+                        <WrapPanel Orientation="Vertical">
+                            <TextBlock>タイルの横のサイズ</TextBlock>
+                            <ComboBox x:Name="TileWidthComboBox" SelectionChanged="TileWidthComboBox_SelectionChanged"></ComboBox>
+                        </WrapPanel>
+                    </WrapPanel>
                 </WrapPanel>
             </TabItem>
         </TabControl>
