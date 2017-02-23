@@ -54,6 +54,16 @@ namespace BrushPicker
             InitImageBrushComboBox();
         }
 
+        public BrushPickerWindow(Brush defaultBrush)
+        {
+            InitializeComponent();
+            SetNowBrush(defaultBrush);
+            InitColorBar();
+            InitColorCells();
+            UpdateColorCells();
+            InitImageBrushComboBox();
+        }
+
         /// <summary>
         /// カラーバー（グラデーションになっていて、Hを選べるバー）を作成
         /// </summary>
