@@ -12,7 +12,8 @@
                 <WrapPanel Orientation="Vertical">
                     <Canvas x:Name="colorBarCanvas" Width="250" Height="20" Margin="0,5,0,0">
                         <Rectangle x:Name="colorBarRect" Width="250" Height="20"></Rectangle>
-                        <Slider x:Name="colorBarSlider" Width="250" Height="20" />
+                        <Slider x:Name="colorBarSlider" Width="250" Height="20" 
+                                Maximum="360" Minimum="0" LargeChange="10" ValueChanged="colorBarSlider_ValueChanged"/>
                     </Canvas>
                     <Canvas x:Name="colorCellsCanvas" Width="250" Height="250"></Canvas>
                 </WrapPanel>

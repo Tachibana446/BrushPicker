@@ -26,12 +26,40 @@ namespace BrushPicker
             _nowBrush = b;
         }
 
+        private Hsv Hsv { get { return _hsv; } }
+        private Hsv _hsv;
+        public void SetHsv(Hsv hsv)
+        {
+            _hsv = hsv;
+        }
+        /// <summary>
+        /// 現在カラーバーが指しているH
+        /// </summary>
+        uint nowH = 0;
+
         public BrushPickerWindow()
         {
             InitializeComponent();
+            SetHsv(new Hsv(0, 255, 255));
+            SetNowBrush(new SolidColorBrush(GetColorFromHsv(Hsv)));
             InitColorBar();
+            InitColorCells();
+            UpdateColorCells();
         }
 
+        public BrushPickerWindow(Color defaultColor)
+        {
+            InitializeComponent();
+            SetNowBrush(new SolidColorBrush(defaultColor));
+            SetHsv(new Hsv(defaultColor));
+            InitColorBar();
+            InitColorCells();
+            UpdateColorCells();
+        }
+
+        /// <summary>
+        /// カラーバー（グラデーションになっていて、Hを選べるバー）を作成
+        /// </summary>
         private void InitColorBar()
         {
             // グラデーションを何色で表現するか
@@ -46,6 +74,51 @@ namespace BrushPicker
                 barBrush.GradientStops.Add(new GradientStop(GetColorFromHsv(h), length));
             }
             colorBarRect.Fill = barBrush;
+        }
+
+        private List<List<Rectangle>> ColorCells = new List<List<Rectangle>>();
+
+        /// <summary>
+        /// 縦横何セルずつ表示するか
+        /// </summary>
+        private static int cellSplit = 12;
+        /// <summary>
+        /// カラーセル（カラーバーの下のSVを既定個でわったもの）の初期化
+        /// </summary>
+        private void InitColorCells()
+        {
+            double chipSize = colorCellsCanvas.Width / cellSplit * 1.0;
+            for (int y = 0; y < cellSplit; y++)
+            {
+                var list = new List<Rectangle>();
+                for (int x = 0; x < cellSplit; x++)
+                {
+                    var rect = new Rectangle() { Width = chipSize, Height = chipSize };
+                    Canvas.SetLeft(rect, x * chipSize); Canvas.SetTop(rect, y * chipSize);
+                    var s = (byte)Math.Round(x * 255.0 / (cellSplit - 1));
+                    var v = (byte)Math.Round(255 - y * 255.0 / (cellSplit - 1));
+                    rect.Fill = new SolidColorBrush(GetColorFromHsv(Hsv.H, s, v));
+                    colorCellsCanvas.Children.Add(rect);
+                    list.Add(rect);
+                }
+                ColorCells.Add(list);
+            }
+        }
+        /// <summary>
+        /// カラーセルの更新
+        /// </summary>
+        private void UpdateColorCells()
+        {
+            for (int y = 0; y < cellSplit; y++)
+            {
+                for (int x = 0; x < cellSplit; x++)
+                {
+                    var rect = ColorCells[y][x];
+                    byte s = (byte)Math.Round(x * 255.0 / cellSplit);
+                    byte v = (byte)Math.Round(255 - y * 255.0 / cellSplit);
+                    rect.Fill = new SolidColorBrush(GetColorFromHsv(nowH, s, v));
+                }
+            }
         }
 
         /// <summary>
@@ -109,6 +182,17 @@ namespace BrushPicker
             return Color.FromArgb(255, ir, ig, ib);
         }
 
+        /// <summary>
+        /// カラーバーを動かした時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void colorBarSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            uint h = (uint)Math.Round(e.NewValue % 360);
+            nowH = h;
+            UpdateColorCells();
+        }
     }
 
     public class Hsv
@@ -122,6 +206,34 @@ namespace BrushPicker
             H = h % 360;
             S = s;
             V = v;
+        }
+
+        public Hsv(Color color)
+        {
+            int h, s, v;
+            byte max, min = new byte[] { color.R, color.G, color.B }.Min();
+            if (color.R == color.G && color.G == color.B)
+            {
+                max = color.R; h = 0;
+            }
+            else if (color.R >= color.G && color.R >= color.B)
+            {
+                max = color.R; h = 60 * ((color.G - color.B) / (max - min));
+            }
+            else if (color.G >= color.R && color.G >= color.B)
+            {
+                max = color.G; h = 60 * ((color.B - color.R) / (max - min)) + 120;
+            }
+            else
+            {
+                max = color.B; h = 60 * ((color.R - color.G) / (max - min)) + 240;
+            }
+            while (h < 0) h += 360;
+            s = max == 0 ? 0 : (max - min) / max * 255;
+            v = max;
+            H = (uint)h;
+            S = (byte)s;
+            V = (byte)v;
         }
     }
 }
